@@ -141,17 +141,21 @@ export const DELETE = async (request) => {
   const { studentId, courseNo } = body;
 
   //check if studentId and courseNo exist on enrollment
-
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: "Enrollment does not exist",
-  //   },
-  //   { status: 404 }
-  // );
+  const foundStudent = DB.students.find((x) => x.studentId === studentId);
+  const foundEnroll = DB.enrollments.find(
+    (x) => x.courseNo === courseNo && x.studentId === studentId
+  );
+  if (!foundStudent || !foundEnroll)
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Enrollment does not exist",
+      },
+      { status: 404 }
+    );
 
   //perform deletion by using splice or array filter
-
+  DB.enrollments = DB.enrollments.filter((x) => x !== foundEnroll);
   //if code reach here it means deletion is complete
   return NextResponse.json({
     ok: true,
